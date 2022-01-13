@@ -82,13 +82,13 @@ def emsc(filepath='emsc.txt'):
            '======================================\n\n' \
            'Hypocenter Solution (EQM)\n' \
            'Origin Time :  {}\n' \
-           'Lat:  {:.4f}     Lon:  {:.4f}\n' \
+           'org.latitude:  {:.4f}     Lon:  {:.4f}\n' \
            'Depth (km) : {:d}\n' \
            'Mw :  {:.1f}\n\n' \
            '======================================\n' \
            'Centroid Solution\n' \
            'Centroid Time :  {:+.2f} (sec) relative to origin time\n' \
-           'Centroid Lat:  {:.4f}       Lon:  {:.4f}\n' \
+           'Centroid org.latitude:  {:.4f}       Lon:  {:.4f}\n' \
            'Centroid Depth : {:d}\n\n' \
            '======================================\n' \
            'No of Stations:  {:d}    ({})\n' \
@@ -182,7 +182,7 @@ def text(filepath='mt.txt'):
     fm.moment_tensor.tensor.m_tt, fm.moment_tensor.tensor.m_pp, \
     fm.moment_tensor.tensor.m_rt, fm.moment_tensor.tensor.m_rp, fm.moment_tensor.tensor.m_tp)
 
-    # Bechball
+    # Beachball
     with open(ball,'r') as _:
         _text+=''.join([' '*10+line for line in _.readlines()[2:]])
 
@@ -306,8 +306,8 @@ def atlas(filepath='map.png'):
     fig = plt.figure(figsize=(15,15))
 
     # add map
-    m = Basemap(projection='laea', lat_0 = org.latitude,
-                lon_0 = org.longitude, lat_ts=org.latitude,
+    m = Basemap(projection='laea', org.latitude_0 = org.latitude,
+                lon_0 = org.longitude, org.latitude_ts=org.latitude,
                 resolution = 'h', width = width, height = width)
 
     #labels are [left,right,top,bottom]
@@ -360,13 +360,13 @@ def atlas(filepath='map.png'):
     components=fm.extra.components.value
     for i in range(1,len(components)+1,3):
         _sta=components['component_'+str(i)]['attrib']['{custom}station']
-        _lat=float(components['component_'+str(i)]['attrib']['{custom}latitude']) 
+        _org.latitude=float(components['component_'+str(i)]['attrib']['{custom}latitude']) 
         _lon=float(components['component_'+str(i)]['attrib']['{custom}longitude'])
         _w1=bool(float(components['component_'+str(i)]['attrib']['{custom}weight']))
         _w2=bool(float(components['component_'+str(i+1)]['attrib']['{custom}weight']))
         _w3=bool(float(components['component_'+str(i+2)]['attrib']['{custom}weight']))
         _weight=_w1 or _w2 or _w3
-        _x,_y = m(_lon, _lat)
+        _x,_y = m(_lon, _org.latitude)
         # set color to green if station used else red and zorder respectively
         m.scatter(_x, _y, 1500, color='#52D017' if _weight else '#686868', marker='^',\
         zorder=7 if _weight else 6, linewidths=1.5, edgecolor='k' if _weight else '#686868')
